@@ -30,7 +30,7 @@ rq_payload  = b'\x05\x06\x22\x04\xc0\x00\x00\x01'
 packet = eth_header / ip_header / udp_packet / Raw(load=rq_payload)
 
 #packet.show()
-rsp = srp(packet, iface=out_interface)
+rsp = srp(packet, iface=ifaces.data[out_interface])
 rsp_payload = rsp[0].res[0].answer.load
 
 lat = int.from_bytes(rsp_payload[9:13]) * (180/4294967295)
