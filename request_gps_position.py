@@ -2,6 +2,8 @@
 
 from scapy.all import *
 import os
+from getmac import get_mac_address
+import netifaces
 
 # uid of the remote radio
 radio_id = 10206
@@ -11,12 +13,10 @@ radio_id = 10206
 
 # need to be set to appropriate local configuration
 #out_interface = "{sending_network_interface_localpc}"  # i.e. "eth0"
-#src_ip   = "{sending_ip_addr_on_network_interface}"    # i.e. "192.168.10.2"
-#gate_mac = "{mac_address_of_gateway_radio}"            # i.e. "00:11:22:33:44:55"
 
 out_interface = "eth0"
-src_ip   = "192.168.10.2"
-gate_mac = "00:11:22:33:44:55"
+src_ip   = netifaces.ifaddresses(out_interface)[netifaces.AF_INET][0]['addr']
+gate_mac = get_mac_address(ip = list(filter(lambda x: x[1] == out_interface, netifaces.gateways()[netifaces.AF_INET]))[0][0])
 # offset 12.0.0.0 to radio_uid from decimal to ip in byte representation
 dst_ip   = socket.inet_ntoa(struct.pack('!L', radio_id + 0x0c000000))
 src_port = 4001
